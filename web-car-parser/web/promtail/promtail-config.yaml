@@ -1,0 +1,23 @@
+server:
+  http_listen_port: 0
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: ...
+    basic_auth:
+      username: ...
+      password: ...
+
+scrape_configs:
+  - job_name: web
+    docker_sd_configs:
+      -   host: unix:///var/run/docker.sock
+    relabel_configs:
+      -   source_labels: [ __meta_docker_container_label_com_docker_compose_service ]
+          target_label: name
+      -   action: keep
+          regex: ...
+          source_labels: [name]

@@ -1,0 +1,49 @@
+- name: Install required packages for Docker
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+
+- name: Add Docker GPG key
+  become: yes
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  become: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Install Docker
+  become: yes
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+
+- name: Ensure Docker is enabled and started
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Ensure docker group exists
+  become: true
+  group:
+    name: docker
+    state: present
+
+- name: Add current user to docker group
+  become: true
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: yes

@@ -1,0 +1,43 @@
+---
+- name: APT install packages
+  hosts: main
+  roles:
+    - role: apt
+
+
+- name: CI / CD to main server
+  hosts: main
+  roles:
+    - role: sync_files
+
+
+- name: Manage containers
+  hosts: main
+  roles:
+    - role: containers
+      service_name: Monitor
+      service_path: monitor
+      container_names: [prometheus]
+      build: true
+      action: restart
+
+    - role: containers
+      service_name: Bot
+      service_path: telegram_bot
+      container_names: []
+      build: false
+      action: up
+
+    - role: containers
+      service_name: Web
+      service_path: web
+      container_names: [web]
+      build: false
+      action: restart
+
+    - role: containers
+      service_name: Parser
+      service_path: parser
+      container_names: []
+      build: false
+      action: up

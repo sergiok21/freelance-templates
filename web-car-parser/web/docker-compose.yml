@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      - ...
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    ports:
+      - '0:0'
+    networks:
+      - default
+
+
+  web:
+    image: web_app:latest
+    container_name: web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '0:0'
+    volumes:
+      - .:/app
+    environment:
+      - ...
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1G'
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+  promtail_web:
+    image: grafana/promtail:latest
+    container_name: promtail_web
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./promtail:/etc/promtail
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    restart: always
+    networks:
+      - default
+
+
+volumes:
+  postgres_data:
+    driver: local
+
+
+networks:
+  default:
+    external: true
+    name: web_network

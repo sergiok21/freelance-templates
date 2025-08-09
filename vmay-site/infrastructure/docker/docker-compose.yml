@@ -1,0 +1,136 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: always
+    volumes:
+      - ../caddy:/etc/caddy
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - caddy_data:/data
+      - caddy_config:/config
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '256M'
+    ports:
+      - '80:80'
+      - '443:443'
+    networks:
+      - default
+
+  postgres-photo:
+    image: postgres:latest
+    container_name: postgres-photo
+    restart: always
+    environment:
+      - ...
+    volumes:
+      - postgres-photo-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    ports:
+      - '${POSTGRES_HOST}:${POSTGRES_PORT}:5432'
+    networks:
+      - default
+
+  backend-photo:
+    build:
+      context: ${BASE_DIR}
+      dockerfile: ./infrastructure/docker/backend/Dockerfile
+    container_name: backend-photo
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - CONTAINERIZED=True
+    expose:
+      - '0'
+    volumes:
+      - static_volume:/app/photo/staticfiles
+      - media_volume:/app/photo/media
+    depends_on:
+      - postgres-photo
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1G'
+    networks:
+      - default
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "0:0"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: always
+    ports:
+      - "0:0"
+    volumes:
+      - ${BASE_DIR}/infrastructure/monitoring/loki-config.yml:/etc/loki/config.yaml
+    command: -config.file=/etc/loki/config.yaml
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: always
+    ports:
+      - "0:0"
+    volumes:
+      - ...:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${BASE_DIR}/infrastructure/monitoring/promtail-config.yml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    networks:
+      - default
+    depends_on:
+      - loki
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '256M'
+
+volumes:
+  postgres-photo-data:
+    external: true
+
+  grafana-storage:
+    external: true
+
+  static_volume:
+  media_volume:
+  caddy_data:
+  caddy_config:
+
+
+networks:
+  default:
+    external: true
+    name: vmay

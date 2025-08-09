@@ -1,0 +1,76 @@
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Ensure Nginx is enabled and started
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started
+
+
+- name: Install Crontab
+  apt:
+    name: cron
+    state: present
+    update_cache: yes
+
+- name: Ensure Crontab is enabled and started
+  systemd:
+    name: cron
+    enabled: yes
+    state: started
+
+
+- name: Install Fail2ban
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+
+- name: Ensure Fail2ban is enabled and started
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+
+- name: Install required packages for Docker
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Install Docker
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+
+- name: Install Docker Compose
+  apt:
+    name: docker-compose
+    state: present
+
+- name: Ensure Docker is enabled and started
+  systemd:
+    name: docker
+    enabled: yes
+    state: started

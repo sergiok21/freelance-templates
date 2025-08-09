@@ -1,0 +1,129 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    environment:
+      - TZ=Europe/Kyiv
+    ports:
+      - '0:0'
+    volumes:
+      - redis-data:/var/lib/redis-stack/
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '512M'
+    networks:
+      - default
+
+
+  bot:
+    container_name: bot
+    image: bot_app:latest
+    build:
+      context: .
+      dockerfile: bot_service/Dockerfile
+    ports:
+      - "0:0"
+    volumes:
+      - ./bot_service:/app/bot_service
+      - ./shared:/app/shared
+    environment:
+      - ...
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '256M'
+    depends_on:
+      - redis
+    networks:
+      - default
+
+
+  api:
+    container_name: api
+    image: api_app:latest
+    build:
+      context: .
+      dockerfile: api_service/Dockerfile
+    ports:
+      - "0:0"
+    volumes:
+      - ./api_service:/app/api_service
+      - ./shared:/app/shared
+    environment:
+      - ...
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    networks:
+      - default
+    depends_on:
+      - redis
+
+
+  worker:
+    container_name: worker
+    image: worker:latest
+    build:
+      context: .
+      dockerfile: tasks/Dockerfile
+    environment:
+      - ...
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    depends_on:
+      - redis
+    networks:
+      - default
+
+
+  rq_dashboard:
+    container_name: rq_dashboard
+    image: rq_dashboard:latest
+    build:
+      context: .
+      dockerfile: tasks/rq_dashboard/Dockerfile
+    ports:
+      - '0:0'
+    environment:
+      - ...
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '128M'
+    networks:
+      - default
+
+
+  promtail_telegram:
+    image: grafana/promtail:latest
+    container_name: promtail_telegram
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./promtail:/etc/promtail
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    restart: always
+    networks:
+      - default
+
+volumes:
+  redis-data:
+
+
+networks:
+  default:
+    external: true
+    name: telegram_network

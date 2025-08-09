@@ -1,0 +1,19 @@
+- name: "{{ service_name }} service | Start{% if build %} and build{% endif %} containers {% if container_names %}({{ container_names | join(', ') }}){% endif %}"
+  command: docker-compose -f docker-compose.yml up -d {% if build %}--build {% endif %}{% if container_names %}{{ container_names | join(' ') }}{% endif %}
+  args:
+    chdir: "{{ base_remote_project_path }}/{{project_name}}/{{ service_path }}"
+  when: action == "up" or (action == "force up" and compose_status.stdout.find("Up") == -1)
+
+
+- name: "{{ service_name }} service | Restart containers {% if container_names %}({{ container_names | join(', ') }}){% endif %}"
+  command: docker-compose -f docker-compose.yml restart {% if container_names %}{{ container_names | join(' ') }}{% endif %}
+  args:
+    chdir: "{{ base_remote_project_path }}/{{project_name}}/{{ service_path }}"
+  when: action == "restart" or (action == "force up" and compose_status.stdout.find("Up") != -1)
+
+
+- name: "{{ service_name }} service | Down containers {% if container_names %}({{ container_names | join(', ') }}){% endif %}"
+  command: docker-compose -f docker-compose.yml down {% if container_names %}{{ container_names | join(' ') }}{% endif %}
+  args:
+    chdir: "{{ base_remote_project_path }}/{{project_name}}/{{ service_path }}"
+  when: action == "down"

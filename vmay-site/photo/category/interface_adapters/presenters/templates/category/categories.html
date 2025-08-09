@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static extension_tags %}
+
+
+{% block toolbar %}
+    <li style="padding-left: 0 !important;"><a href="{% url 'home:home' %}">Домашня</a></li>
+    <li><a href="{% url 'portfolio:portfolio' "all" %}">Портфоліо</a></li>
+    <li><a href="{% url 'condition:conditions' %}">Умови</a></li>
+    <li><a href="{% url 'category:categories' %}" class="active-txt">Тарифи</a></li>
+    <li style="padding-right: 0 !important;"><a href="{% url 'contact:contact' %}">Зв'язок</a></li>
+{% endblock %}
+
+{% block banner %}
+    <div class="page-heading">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 header-text">
+                    <h2><em>Тарифи</em> на послуги</h2>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <section class="closed-contests" id="categories" style="margin-top: 0;padding-top: 0; padding-bottom: 0;">
+        <div class="container">
+            <div class="row" style="display: flex; justify-content: center">
+                <div class="row g-4">
+                    {% for category in object_list %}
+                        <div class="col-lg-4">
+                            <div class="pricing-item shadow">
+                                <img src="{{ category.image }}" class="img-fluid rounded" alt="">
+                                <h4 class="custom-title-font">{{ category.name }}</h4>
+                                <p class="marked">{{ category.description|to_p }}</p>
+                                <span class="price">₴{{ category.price }} грн</span>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="border-button" style="margin-top: 30px; margin-bottom: 30px">
+                                            <a class="w-80p"
+                                               href="{% url 'portfolio:portfolio' category.slug %}#gallery">Приклади</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+        </div>
+    </section>
+{% endblock %}

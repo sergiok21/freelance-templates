@@ -1,0 +1,91 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "0:0"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - ...
+    restart: always
+    networks:
+      - default
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "0:0"
+    command: -config.file=/etc/loki/loki.yaml
+    volumes:
+      - ./loki:/etc/loki
+      - loki-data:/loki
+    networks:
+      - default
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    user: "root"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "0:0"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.route-prefix=/prometheus"
+      - "--web.external-url=..."
+    networks:
+      - default
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - "0:0"
+    command:
+      - "--url_base_prefix=/cadvisor"
+    user: "root"
+    networks:
+      - default
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "0:0"
+    restart: always
+    networks:
+      - default
+
+  promtail_system:
+    image: grafana/promtail:latest
+    container_name: promtail_system
+    volumes:
+      - /var/log:/var/log
+      - ./promtail:/etc/promtail
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    restart: always
+    networks:
+      - default
+
+
+volumes:
+  grafana-storage:
+  loki-data:
+  prometheus_data:
+
+
+networks:
+  default:
+    external: true
+    name: monitor_network

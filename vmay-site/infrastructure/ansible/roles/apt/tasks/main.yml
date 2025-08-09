@@ -1,0 +1,4 @@
+- name: Install packages via APT
+  include_tasks: "{{ item }}"
+  loop:
+    - docker.yml

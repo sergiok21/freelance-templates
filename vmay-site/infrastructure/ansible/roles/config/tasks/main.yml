@@ -1,0 +1,4 @@
+- name: Start configuration tasks
+  include_tasks: "{{ item }}"
+  loop:
+    ...

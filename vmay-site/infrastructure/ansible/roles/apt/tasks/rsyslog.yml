@@ -1,0 +1,12 @@
+- name: Install rsyslog
+  become: yes
+  apt:
+    name: rsyslog
+    state: present
+    update_cache: yes
+
+- name: Ensure rsyslog is enabled and started
+  systemd:
+    name: rsyslog
+    enabled: yes
+    state: started

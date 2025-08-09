@@ -1,0 +1,14 @@
+- name: Synchronizing project files
+  ansible.builtin.synchronize:
+    src: "{{ base_local_project_path }}"
+    dest: "{{ base_remote_project_path }}"
+    delete: no
+    rsync_opts:
+      - "--exclude=venv"
+      - "--exclude=__pycache__"
+      - "--exclude=.git"
+      - "--exclude=.idea"
+      - "--exclude=ansible"
+      - "--exclude=./test/"
+      - "--rsh='ssh -i {{ ssh_key }} -o StrictHostKeyChecking=no'"
+  delegate_to: localhost

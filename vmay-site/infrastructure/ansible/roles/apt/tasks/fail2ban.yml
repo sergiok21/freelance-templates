@@ -1,0 +1,12 @@
+- name: Install Fail2ban
+  become: yes
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+
+- name: Ensure Fail2ban is enabled and started
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
