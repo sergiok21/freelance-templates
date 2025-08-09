@@ -1,48 +1,52 @@
-## Встановлення
+# Clash of Clans Telegram Bot
 
-В проєкті застосовуються наступні інтеграції: Telegram, Google Cloud, Google Sheets, Clash of Clans API. Тому потрібно попередньо налаштувати усі сервіси.
+## Installation
+
+This project integrates with the following services: Telegram, Google Cloud, Google Sheets, and Clash of Clans API.  
+You need to configure all these services beforehand.
 
 ### Google Cloud:
 
-- Переходимо на сайт <b>[Google Cloud](https://console.cloud.google.com/)</b>.
-- API & Services. 
-- Створюємо проєкт (зліва зверху, біля Google Cloud). 
-- Додаємо бібліотеки (Library): Google Sheets API, Google Drive API. 
-- Повертаємось в API & Services, переходимо в Credentials і там: Create Credentials --> Service account --> Заповнюємо дані. 
-- Переходимо у створений сервісний аккаунт (нижче у списку) --> Зберігаємо E-mail --> Keys -> Add key --> Create new key. Зберігаємо у JSON, в будь-яку папку (можна в папку проєкта). 
-- Створюємо таблицю в Google Sheets --> Налаштування доступу --> Додаємо E-mail сервісного аккаунту.
+- Go to <b>[Google Cloud](https://console.cloud.google.com/)</b>.
+- Navigate to **API & Services**.
+- Create a project (top left, next to the Google Cloud logo).
+- Add libraries (Library): **Google Sheets API**, **Google Drive API**.
+- Go back to **API & Services**, go to **Credentials** and: Create Credentials → Service account → Fill in the details.
+- Open the created service account (listed below) → Save the **E-mail** → **Keys** → **Add key** → **Create new key**.  
+  Save it as JSON in any folder (you can place it in the project folder).
+- Create a spreadsheet in Google Sheets → **Share settings** → Add the service account email.
 
 ### Clash of Clans API:
 
-- Переходимо на сайт <b>[Clash of Clans for developers](https://developer.clashofclans.com/)</b>.
-- Створюємо аккаунт на офіційному сайті.
-- Переходимо в особистий аккаунт.
-- Створюємо новий ключ із поточною публічною адресою.
+- Go to <b>[Clash of Clans for developers](https://developer.clashofclans.com/)</b>.
+- Create an account on the official site.
+- Go to your personal account.
+- Create a new key with your current public IP address.
 
-### Налаштування проєкту:
+### Project Setup:
 
-- Завантажуємо проєкт:
+- Download the project:
 ```bash
 git clone https://github.com/sergiok21/ternopil_telegram_bot.git
 ```
-- Створюємо віртуальне середовище в папці з проєктом:
+- Create a virtual environment in the project folder:
 ```bash
 python -m venv venv
 ```
-- Застосування у Windows:
+- For Windows:
 ```bash
 ./venv/Scripts/activate
 ```
-для Unix-подібних:
+- For Unix-like systems:
 ```bash
 source ./venv/bin/activate
 ```
-- Завантажуємо залежності:
+- Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-- <i>Додатково, якщо використовується PyCharm IDE: Налаштування --> Проєкт --> Python Interpreter --> Add Interpreter (local)...</i>
-- Редагуємо `.env.example`-файл, та потім змінюємо назву на `.env`. Дані до заповнення:
+- *Optional, if using PyCharm IDE*: Settings → Project → Python Interpreter → Add Interpreter (local)...
+- Edit the `.env.example` file and rename it to `.env`. Fill in the following fields:
 ```
 BOT_TOKEN=...
 CLASH_TOKEN=...
@@ -51,19 +55,19 @@ ADMINS=...
 SHEET_CREDENTIALS=...
 SHEET_URL=...
 ```
-**Пояснення деяких полів `.env`:**\
-`GROUP_ID` - можна отримати через бота.\
-`ADMINS` - може записуватись через `123, 456`, цим самим адміністратором може бути не один користувач.\
-`SHEET_CREDENTIALS` - повний шлях `.json`-файлу з Google Cloud.
-`SHEET_URL` - посилання на таблицю (https://docs.google.com/spreadsheets/d/1ZX....23F/).
+**Explanation of some `.env` fields:**  
+`GROUP_ID` – can be obtained via the bot.  
+`ADMINS` – can be written as `123,456`, allowing multiple admins.  
+`SHEET_CREDENTIALS` – full path to the `.json` file from Google Cloud.  
+`SHEET_URL` – spreadsheet link (https://docs.google.com/spreadsheets/d/1ZX....23F/).
 
-## Використання
+## Usage
 
-Доступні наступні команди:
+Available commands:
 
-### 1. Для всіх учасників групи:
-- `/add_account #TAG` — додавання акаунту в таблицю.
+### 1. For all group members:
+- `/add_account #TAG` — add an account to the table.
 
-### 2. Для привілейованих учасників:
-- `/create_poll` — створення опитування.
-- `/empty_answers` — відображення користувачів, які не відповіли на опитування.
+### 2. For privileged members:
+- `/create_poll` — create a poll.
+- `/empty_answers` — display users who have not responded to the poll.

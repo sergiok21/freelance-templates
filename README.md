@@ -18,7 +18,7 @@ A list of projects worth reviewing by priority:
 3. [ternopil-coc-telegram-bot](./ternopil-coc-telegram-bot)
 4. [web-automation](./web-automation)
 5. [data-collection-telegram-bot](./data-collection-telegram-bot)
-6. [netscape-cookie-convertor](./netscape-cookie-convertor)
+6. [netscape-cookie-converter](netscape-cookie-converter)
 
 *Note: Each project contains README.md.*
 
