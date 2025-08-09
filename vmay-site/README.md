@@ -29,9 +29,11 @@ Core goals:
 vmay-site/
 ├── photo/                     # Django project & feature modules (Home, Portfolio, etc.)
 │   ├── manage.py
+│   ├── assets/                # Fixtures, media, static files
 │   ├── photo/                 # Django project package (urls, settings wiring, etc.)
 │   ├── category/              # Category module (Clean Architecture layers)
-│   ├── extensions/            # Extensions for Django-apps
+│   ├── extensions/            # Extensions for Django-apps (templates + templatetags, repositories, etc.)
+│   ├── ...                    # Other Django-apps
 │   └── tests/                 # Test suite
 ├── pkg/                       # Shared Clean Architecture scaffolding (app/use cases/adapters)
 │   ├── application/
